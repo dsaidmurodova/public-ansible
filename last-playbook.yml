@@ -1,0 +1,44 @@
+---
+- name: Manage system services and reboot
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure ufw is installed
+      apt:
+        name: ufw
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure apache2 is installed
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Start and enable ufw service
+      service:
+        name: ufw
+        state: started
+        enabled: yes
+
+    - name: Start and enable apache2 service
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Restart apache2 service
+      service:
+        name: apache2
+        state: restarted
+
+    - name: Disable ufw service
+      service:
+        name: ufw
+        state: stopped
+        enabled: no
+
+    - name: Reboot the server
+      reboot:
+        msg: "Reboot initiated by Ansible playbook"
+        reboot_timeout: 600
